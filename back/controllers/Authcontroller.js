@@ -50,6 +50,7 @@ export async function addOnce(req, res) {
 
       
       
+    
       user
         .create(userHashed)
         .then(newuser => {
@@ -73,7 +74,7 @@ export async function addOnce(req, res) {
   })
 }
 }
-
+// login user
 export async function login(req, res, next) {
   const { email, password } = req.body
   // Check if username and password is provided
