@@ -8,10 +8,11 @@ import outfitRoutes from './routes/outfit.js';
 import userroute from './routes/Auth.js';
 import auth from './middleware/auth.js';
 
+
 const app = express();
 
-const port = process.env.PORT || 9090;
-const databaseName = 'clothy';
+const port = process.env.PORT ;
+const databaseName = process.env.DATABASE;
 
 
 // Cela afichera les requêtes MongoDB dans le terminal
@@ -34,7 +35,8 @@ mongoose
     app.set('view engine', 'jade');
 app.use(express.json());
 app.use(cookieParser());
-app.use(session({ secret: "mano1234", saveUninitialized: true, resave: true }));
+app.use("/img",express.static('public/image'));// servir les images et les fichiers
+app.use(session({ secret: process.env.SECRET, saveUninitialized: true, resave: true }));
 const user = {
     name: "Mano Sriram",
     source: "Youtube"
@@ -56,9 +58,7 @@ app.get("/user", (req, res) => {
 // });
 app.use('/outfit', outfitRoutes);
 app.use('/api',userroute);
-app.get("/welcome", auth, (req, res) => {
-    res.status(200).send("Welcome 🙌 ");
-  });
+
 
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}/`);

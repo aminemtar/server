@@ -14,7 +14,7 @@ const userSchema = new Schema({
         required: true
     },
     birthdate: {
-        type: Date,
+        type: String,
         required: true
     },
     pseudo: {
@@ -23,11 +23,16 @@ const userSchema = new Schema({
     },
     imageF:{
      type: String,
-     required : false
+     required : true
+    },
+    image:{
+       data:Buffer,
+       contentType: String
     },
     email: {
         type: String,
-        required: true
+        required: true,
+        
     },
     phone: {
         type: Number,
@@ -39,11 +44,16 @@ const userSchema = new Schema({
 
     },
     isVerified:{
-     type :Boolean
+     type :Boolean,
+     required : true
     },
     preference: {
         type: String,
         required: true
+    },
+    gender:{
+     type : String,
+     required :true
     },
     resetPasswordToken: {
         type: String,
