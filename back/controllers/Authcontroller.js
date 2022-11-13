@@ -61,7 +61,7 @@ export async function addOnce(req, res) {
           // newuser.token = token;
           // const token = generateUserToken(newuser)
           // doSendConfirmationEmail(email,token,req.protocol);
-         // main(newuser.email);
+        // main(newuser.email);
           res.status(200).json(newuser);
         })
         .catch(err => {
