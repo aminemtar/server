@@ -4,7 +4,10 @@ services:
      mongo_db:
           container_name: db_container
           image: mongo:latest
+          ports:
+               - 9091:27017
           restart: always
+
           volumes:
                - mongo_db:/data/db
 
@@ -12,13 +15,13 @@ services:
      api:
           build: .
           ports:
-          - 4000:3000
+               - 3000:9090
           environment:
-            PORT: 9090
-            MONGODB_URI: mongodb://mongo_db:27017
-            DB_NAME: clothy
-            NAME: TrulyMittal
+               PORT: 9090
+               MONGODB_URI: mongodb://mongo_db:27017
+               DB_NAME: clothy
+               NAME: TrulyMittal
           depends_on:
-          - mongo_db
+               - mongo_db
 volumes:
      mongo_db: {}

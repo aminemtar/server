@@ -7,11 +7,13 @@ import cookieParser from 'cookie-parser';
 import outfitRoutes from './routes/outfit.js';
 import userroute from './routes/Auth.js';
 import auth from './middleware/auth.js';
+import passport from 'passport';
+import cookieSession from 'cookie-session';
 
 
 const app = express();
 
-const port = process.env.PORT ;
+const port = process.env.PORT || 9090 ;
 const databaseName = process.env.DATABASE;
 
 
@@ -22,7 +24,7 @@ mongoose.Promise = global.Promise;
 
 // Se connecter à MongoDB
 mongoose
-    .connect(`mongodb://localhost:27017/${databaseName}`)
+    .connect(`mongodb://mongo_db:9091/${databaseName}`)
     .then(() => {
         // Une fois connecté, afficher un message de réussite sur la console
         console.log(`Connected to ${databaseName}`);
@@ -33,10 +35,15 @@ mongoose
     });
     app.set('views', './views');
     app.set('view engine', 'jade');
+    app.use(express.urlencoded({ extended: true }));  
 app.use(express.json());
 app.use(cookieParser());
 app.use("/img",express.static('public/image'));// servir les images et les fichiers
+app.use("/uploads",express.static('uploads'));
 app.use(session({ secret: process.env.SECRET, saveUninitialized: true, resave: true }));
+
+
+
 const user = {
     name: "Mano Sriram",
     source: "Youtube"
@@ -45,8 +52,10 @@ app.get("/login", (req, res) => {
     req.session.user = user;
     req.session.save();
     return res.send("User logged in");
-});
-
+});("/",(req,res,next)=>{
+    res.json({message :"it works"})
+})
+app.get
 app.get("/user", (req, res) => {
     const sessionUser = req.session.user;
     return res.send(sessionUser);
@@ -58,6 +67,10 @@ app.get("/user", (req, res) => {
 // });
 app.use('/outfit', outfitRoutes);
 app.use('/api',userroute);
+
+
+
+
 
 
 app.listen(port, () => {
