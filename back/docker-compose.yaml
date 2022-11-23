@@ -16,11 +16,7 @@ services:
           build: .
           ports:
                - 3000:9090
-          environment:
-               PORT: 9090
-               MONGODB_URI: mongodb://mongo_db:27017
-               DB_NAME: clothy
-               NAME: TrulyMittal
+         
           depends_on:
                - mongo_db
 volumes:

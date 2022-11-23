@@ -13,8 +13,24 @@ const outfitSchema = new Schema({
     },
     photo: {
         type: String,
+        required: false
+    },
+    userID: {
+        type: String,
         required: true
     },
+    taille: {
+        type: String,
+        required: true
+    },
+    description: {
+        type: String,
+        required: true
+    },
+    photo:{
+        type:String,
+        required:true
+    }
    
 
 }, {

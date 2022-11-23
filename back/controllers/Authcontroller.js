@@ -131,7 +131,7 @@ export function logout(req, res) {
 }
 export async function deletee(req, res) {
   user
-    .findOneAndRemove(req.params.id)
+    .findOneAndRemove({"_id":req.params.id})
     .then(doc => {
       res.status(200).json(doc);
     })
@@ -349,9 +349,9 @@ export async function main(email) {
 
   // create reusable transporter object using the default SMTP transport
   let transporter = nodemailer.createTransport({
-    host: process.env.HOST,
+    host: process.env.HOSTM,
     service: process.env.SERVICE,
-    port: 587,
+    port: process.env.PORTM,
     secure: false, // true for 465, false for other ports
     auth: {
       user: process.env.GMAIL_USER, // generated ethereal user
@@ -390,9 +390,9 @@ export async function sendOTP(email) {
 
   // create reusable transporter object using the default SMTP transport
   let transporter = nodemailer.createTransport({
-    host: process.env.HOST,
+    host: process.env.HOSTM,
     service: process.env.SERVICE,
-    port: 587,
+    port: process.env.PORTM,
     secure: false, // true for 465, false for other ports
     auth: {
       user: process.env.GMAIL_USER, // generated ethereal user
@@ -511,12 +511,9 @@ export function testcode(req, res) {
 export async function updateProfile (req, res)  {
   const { email, firstname, lastname, birthdate, gender, isVerified ,phone,pseudo} = req.body
 let use
-let imageF;
-  if (req.file) {
-    imageF = req.file.filename
-  }
+
   let userr = await user.findOneAndUpdate(
-    req.params.id, req.body,
+    {"_id":req.params.id}, req.body,
     {
       $set: {
         email,
@@ -561,7 +558,7 @@ export async function confirmAccount(email) {
 
   // create reusable transporter object using the default SMTP transport
   let transporter = nodemailer.createTransport({
-    host: process.env.HOST,
+    host: process.env.HOSTM,
     service: process.env.SERVICE,
     port: 587,
     secure: false, // true for 465, false for other ports
@@ -901,14 +898,14 @@ export async function changePassword (req,res){
 }
 export async function UpdateImage(req,res){
 
-  let email = req.params.id
-  const userr = await user.findOne({ email})
+  
+  const userr = await user.findOne({ "email":req.params.email})
   let imageF;
   if (req.file) {
     imageF = req.file.filename
   
     let userr = await user.findOneAndUpdate(
-      { email },
+      { "email":req.params.email },
       {
         $set: {
           imageF :imageF,

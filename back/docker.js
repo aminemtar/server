@@ -9,15 +9,20 @@ import userroute from './routes/Auth.js';
 import auth from './middleware/auth.js';
 import passport from 'passport';
 import cookieSession from 'cookie-session';
-import swaggerDoc from 'swagger-ui-express';
-import swggerDocumentation from './Documentation.js';
 
 
 const app = express();
 
-const port = process.env.PORT || 9090 ;
+const port = process.env.PORT ;
 const databaseName = process.env.DATABASE;
+//app.use(passport.initialize());
 
+//Setting Up Session
+// app.use(passport.session());
+// app.use(cookieSession({
+//     name: 'tuto-session',
+//     keys: ['key1', 'key2']
+// }))
 
 // Cela afichera les requêtes MongoDB dans le terminal
 mongoose.set('debug', true);
@@ -36,21 +41,43 @@ mongoose
         console.log(err);
     });
     app.set('views', './views');
-   
+    app.set('view engine', 'jade');
     app.use(express.urlencoded({ extended: true }));  
 app.use(express.json());
 app.use(cookieParser());
 app.use("/img",express.static('public/image'));// servir les images et les fichiers
 app.use("/uploads",express.static('uploads'));
 app.use(session({ secret: process.env.SECRET, saveUninitialized: true, resave: true }));
-app.use("/documentations",swaggerDoc.serve);
-app.use("/documentations",swaggerDoc.setup(swggerDocumentation));
+
+// app.get('/google/callback', 
+//     passport.authenticate('google', 
+//     {failureRedirect: '/failed'}), 
+//     (req, res) => {
+//         res.redirect('/good');
+//     })
 
 
+const user = {
+    name: "Mano Sriram",
+    source: "Youtube"
+};
+app.get("/login", (req, res) => {
+    req.session.user = user;
+    req.session.save();
+    return res.send("User logged in");
+});("/",(req,res,next)=>{
+    res.json({message :"it works"})
+})
+app.get
+app.get("/user", (req, res) => {
+    const sessionUser = req.session.user;
+    return res.send(sessionUser);
+});
 
-
-
-
+// app.get("/logout", (req, res) => {
+//     req.session.destroy();
+//     return res.send("User logged out!");
+// });
 app.use('/outfit', outfitRoutes);
 app.use('/api',userroute);
 
