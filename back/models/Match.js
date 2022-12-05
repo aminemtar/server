@@ -2,39 +2,30 @@ import mongoose from 'mongoose'; // Importer Mongoose
 const { Schema, model } = mongoose; // Utiliser Schema et model du module mongoose
 
 // Créez votre schéma qui décrit à quoi ressemblera chaque document
-const outfitSchema = new Schema({
-    typee: {
+const MatchSchema = new Schema({
+    IdSession: {
         type: String,
         required: true // Cet attribut est obligatoire
     },
-    couleur: {
+    IdReciver: {
         type: String,
         required: true
     },
-    photo: {
-        type: String,
+    IdOutfit: {
+        type: Array,
         required: false
     },
-    userID: {
-        type: String,
-        required: true
+    IdOutfitR:{
+        type : Array,
+        required :false
+
     },
-    taille: {
-        type: String,
-        required: true
-    },
-    description: {
-        type: String,
-        required: true
-    },
-    photo:{
-        type:String,
-        required:true
-    },
-    eliminated:{
-        type:Array,
-        required : false
+    Etat: {
+        type: Boolean,
+
+        required: false
     }
+  
    
 
 }, {
@@ -45,4 +36,4 @@ const outfitSchema = new Schema({
  * Créer notre modèle à partir du schéma pour effectuer
  * des actions CRUD sur nos documents et l'exporter
  */
-export default model("outfit", outfitSchema);
+export default model("Match", MatchSchema);

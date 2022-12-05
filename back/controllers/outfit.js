@@ -1,6 +1,7 @@
 import outfit from '../models/outfit.js';
 import session from 'express-session';
 import user from '../models/user.js';
+import mongoose from 'mongodb'
 
 export function getAll(req, res) {
 
@@ -27,7 +28,8 @@ export function addOnce(req, res) {
         couleur:req.body.couleur,
         description:req.body.description,
         userID:userid,
-        photo:imageF
+        photo:imageF,
+        eliminated:[]
     }
     outfit
         .create(out)
@@ -52,13 +54,61 @@ export function getOnce(req, res) {
 
 export function getOutfitByType(req, res) {
     outfit
-        .find({ "typee": req.params.typee ,"userID":req.params.userID})
+        .find({ "typee": req.params.typee ,userID:req.session.user._id})
         .then((doc) => {
          
 
             res.status(200).json(doc);
             console.log(doc)
         })
+        .catch(err => {
+            res.status(500).json({ error: err });
+        });
+}
+var haja 
+export function getswiped(req,res)
+{
+    user
+    .find({"_id":req.session.user._id})
+    .then((doc =>{
+     console.log(doc[0].swiped)
+     let s = doc[0].swiped
+     haja = s
+        res.status(200).json(s);
+        return s
+    }))
+    .catch(err => {
+        res.status(500).json({ error: err });
+    });
+}
+
+var bo = false
+var data2
+export async function getOutfitByUser(req, res) {
+  
+    //let list =  mongoose.ObjectId(haja)
+    console.log( haja)
+    console.log( "---------------")
+
+    //console.log( mongoose.ObjectId(haja))
+  await  outfit
+        .find({userID:{$nin :[req.session.user._id]},"_id":{$nin:haja}})
+        .then((doc) => {
+           // let list = elem.map(s => mongoose.ObjectId(s))
+              // console.log(doc)
+           
+              res.status(200).json(doc)
+            
+   
+         
+            
+
+           // res.status(200).json(doc);
+           
+            
+           
+        })
+
         .catch(err => {
             res.status(500).json({ error: err });
         });

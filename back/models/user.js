@@ -67,6 +67,9 @@ const userSchema = new Schema({
         required: false
     },token:{
         type: String
+    },swiped:{
+        type: Array,
+        required:false
     }
 
 

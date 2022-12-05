@@ -9,7 +9,9 @@ import {
     patchOnce,
     deleteOnce,
     Updatephoto,
-    getOutfitByType
+    getOutfitByType,
+    getOutfitByUser,
+    getswiped
 } from '../controllers/outfit.js';
 
 const router = express.Router();
@@ -18,7 +20,9 @@ router
     .get('/getall',getAll)
     .post('/addOutfit',upload.single('photo'),addOnce)
     .post("/updatephoto/:id",upload.single('photo'),Updatephoto)
-    .get("/OFT/:userID&:typee",getOutfitByType)
+    .get("/OFT/:typee",getOutfitByType)
+    .get("/allOFT",getOutfitByUser)
+    .get("/getswiped",getswiped)
 
 router
     

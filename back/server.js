@@ -6,6 +6,7 @@ import session from 'express-session';
 import cookieParser from 'cookie-parser';
 import outfitRoutes from './routes/outfit.js';
 import userroute from './routes/Auth.js';
+import matchroute from './routes/MatchRoute.js'
 import auth from './middleware/auth.js';
 import passport from 'passport';
 import cookieSession from 'cookie-session';
@@ -26,7 +27,7 @@ mongoose.Promise = global.Promise;
 
 // Se connecter à MongoDB
 mongoose
-    .connect(`mongodb://mongo_db:27017/${databaseName}`)
+    .connect(`mongodb://localhost:27017/${databaseName}`)
     .then(() => {
         // Une fois connecté, afficher un message de réussite sur la console
         console.log(`Connected to ${databaseName}`);
@@ -53,6 +54,8 @@ app.use("/documentations",swaggerDoc.setup(swggerDocumentation));
 
 app.use('/outfit', outfitRoutes);
 app.use('/api',userroute);
+app.use('/match',matchroute);
+
 
 
 
