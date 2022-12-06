@@ -27,7 +27,7 @@ mongoose.Promise = global.Promise;
 
 // Se connecter à MongoDB
 mongoose
-    .connect(`mongodb+srv://medamine:maqarouna@clothy.0wz746t.mongodb.net/clothy`,{
+    .connect(`mongodb://localhost:27017/${databaseName}`,{
         useNewUrlParser: true,
     useUnifiedTopology: true,
     })
