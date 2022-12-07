@@ -1,5 +1,8 @@
 import express from 'express';
 import upload from '../middleware/imageUP.js';
+import sharp from 'sharp';
+import path from 'path';
+import fs from 'fs'
 import { check } from 'express-validator';
 import {
 

@@ -1,4 +1,6 @@
 
+
+
 import user from '../models/user.js';
 import match from '../models/Match.js';
 import outfit from '../models/outfit.js';
@@ -49,6 +51,8 @@ export async function Swipeleft(req, res) {
     })
     .then(docs => {
         res.status(200).json(docs);
+        console.log("creating below")
+            console.log(docs)
       
     
         
@@ -76,8 +80,13 @@ export async function Swipeleft(req, res) {
         }      
     })
     .then(docs => {
-        res.status(200).json(docs);
+        console.log(docs)
+      let  newdoc = {docs , firebase : 1, userID : req.session.user._id}
+        res.status(200).json(newdoc)
       
+        console.log("creating 222222 below")
+        console.log(newdoc)
+  
     
         
     })
@@ -119,3 +128,24 @@ export async function Swipeleft(req, res) {
     })
    
   }
+
+  // export function swipedclothes(req,res){
+  //   match.find({ IdSession: req.session.user._id, "IdReciver": req.params.IdReciver })
+  //   .then(docs => {
+  //     res.status(200).json(docs);
+  //     if(d.IdSession === req.session.user._id)
+  //     {
+  //       outfit.find({"_id": docs })
+  //       res.send(docs);
+  //     }
+  //     else if(docs.IdReciver=== req.session.user._id)
+  //     {
+  //       outfit.find({"_id": docs })
+  //       res.status(200).json(docs);
+  //     }
+    
+  
+      
+  // })
+
+  // }

@@ -9,7 +9,8 @@ import userroute from './routes/Auth.js';
 import auth from './middleware/auth.js';
 import passport from 'passport';
 import cookieSession from 'cookie-session';
-
+import { Server } from 'socket.io';
+const io = new Server(9090)
 
 const app = express();
 
@@ -51,6 +52,20 @@ app.use(cookieParser());
 app.use("/img",express.static('public/image'));// servir les images et les fichiers
 app.use("/uploads",express.static('uploads'));
 app.use(session({ secret: process.env.SECRET, saveUninitialized: true, resave: true }));
+io.on('connection', (socket) => {
+
+    console.log('a user connected');
+    socket.emit('message', 'Hello world');
+    socket.on('disconnect', () => {
+        console.log('user disconnected');
+    });
+    socket.on('chatmessage', msg => {
+
+        io.emit('message', msg)
+
+
+    })
+});
 
 // app.get('/google/callback', 
 //     passport.authenticate('google', 

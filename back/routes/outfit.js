@@ -1,6 +1,9 @@
 import express from 'express';
 import verif from '../verifytoken.js';
 import upload from '../middleware/imageUP.js' ;
+import sharp from 'sharp';
+import path from 'path';
+import fs from 'fs'
 
 import {
     getAll,
@@ -19,7 +22,7 @@ const router = express.Router();
 router
     .get('/getall',getAll)
     .post('/addOutfit',upload.single('photo'),addOnce)
-    .post("/updatephoto/:id",upload.single('photo'),Updatephoto)
+    .post("/updatephoto/:id",upload.single('photo'),Updatephoto,)
     .get("/OFT/:typee",getOutfitByType)
     .get("/allOFT",getOutfitByUser)
     .get("/getswiped",getswiped)

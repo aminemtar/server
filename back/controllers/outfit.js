@@ -2,6 +2,10 @@ import outfit from '../models/outfit.js';
 import session from 'express-session';
 import user from '../models/user.js';
 import mongoose from 'mongodb'
+import express from 'express';
+import sharp from 'sharp';
+import path from 'path';
+import fs from 'fs';
 
 export function getAll(req, res) {
 
@@ -15,12 +19,21 @@ export function getAll(req, res) {
         });
 }
 
-export function addOnce(req, res) {
+export async function addOnce(req, res) {
     // Invoquer la méthode create directement sur le modèle
     let userid = req.session.user._id
     let imageF;
     if (req.file) {
       imageF = req.file.filename
+      const { filename: image } = req.file;
+       
+        await sharp(req.file.path)
+         .resize(width=200, height=200)
+         .jpeg({ quality: 90 })
+         .toFile(
+             path.resolve(req.file.destination,'outfit',image)
+         )
+         fs.unlinkSync(req.file.path)
     }
     let out ={
         typee:req.body.typee,
@@ -157,6 +170,15 @@ export async function Updatephoto(req,res){
     let photo;
     if (req.file) {
       photo = req.file.filename
+      const { filename: image } = req.file;
+       
+        await sharp(req.file.path)
+         .resize(200, 200)
+         .jpeg({ quality: 90 })
+         .toFile(
+             path.resolve(req.file.destination,'outfit',image)
+         )
+         fs.unlinkSync(req.file.path)
     
       let outfitt = await outfit.findOneAndUpdate(
         { "_id":req.params.id },

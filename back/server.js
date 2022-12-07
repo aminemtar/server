@@ -44,8 +44,8 @@ mongoose
     app.use(express.urlencoded({ extended: true }));  
 app.use(express.json());
 app.use(cookieParser());
-app.use("/img",express.static('public/image'));// servir les images et les fichiers
-app.use("/uploads",express.static('uploads'));
+app.use("/uploads",express.static('uploads/resized'));
+app.use("/upload",express.static('uploads/outfit'));
 app.use(session({ secret: process.env.SECRET, saveUninitialized: true, resave: true }));
 app.use("/documentations",swaggerDoc.serve);
 app.use("/documentations",swaggerDoc.setup(swggerDocumentation));

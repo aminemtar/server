@@ -8,6 +8,9 @@ import fs from 'fs';
 import { promisify } from 'util';
 import multer from 'multer';
 import express from 'express';
+import sharp from 'sharp';
+import path from 'path';
+
 
 import dotenv from 'dotenv';
 dotenv.config();
@@ -755,7 +758,6 @@ export async function confirmAccount(email) {
                             <tr>
                               <td align="center" bgcolor="#1a82e2" style="border-radius: 6px;">
                                 <a href='https://cicero-crm.com/api/confirm/`+email+`' target="_blank" style="display: inline-block; padding: 16px 36px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; color: #ffffff; text-decoration: none; border-radius: 6px;">Comfirm your email</a>
-                                <a href='https://cicero-crm.com/api/confirm/`+email+`' target="_blank" style="display: inline-block; padding: 16px 36px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; color: #ffffff; text-decoration: none; border-radius: 6px;">Comfirm your email</a>
 
                                 </td>
                             </tr>
@@ -905,6 +907,15 @@ export async function UpdateImage(req,res){
   let imageF;
   if (req.file) {
     imageF = req.file.filename
+    const { filename: image } = req.file;
+       
+        await sharp(req.file.path)
+         .resize(200, 200)
+         .jpeg({ quality: 90 })
+         .toFile(
+             path.resolve(req.file.destination,'resized',image)
+         )
+         fs.unlinkSync(req.file.path)
   
     let userr = await user.findOneAndUpdate(
       { "email":req.params.email },
