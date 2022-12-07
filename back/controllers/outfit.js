@@ -25,15 +25,7 @@ export async function addOnce(req, res) {
     let imageF;
     if (req.file) {
       imageF = req.file.filename
-      const { filename: image } = req.file;
-       
-        await sharp(req.file.path)
-         .resize(width=200, height=200)
-         .jpeg({ quality: 90 })
-         .toFile(
-             path.resolve(req.file.destination,'outfit',image)
-         )
-         fs.unlinkSync(req.file.path)
+      
     }
     let out ={
         typee:req.body.typee,
