@@ -1,0 +1,23 @@
+services:
+     #mongoDB services
+
+     mongo_db:
+          container_name: db_container
+          image: mongo:latest
+          ports:
+               - 9091:27017
+          restart: always
+
+          volumes:
+               - mongo_db:/data/db
+
+     #Node API service
+     api:
+          build: .
+          ports:
+               - 3000:9090
+         
+          depends_on:
+               - mongo_db
+volumes:
+     mongo_db: {}
