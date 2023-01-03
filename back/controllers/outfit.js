@@ -6,6 +6,8 @@ import express from 'express';
 import sharp from 'sharp';
 import path from 'path';
 import fs from 'fs';
+import imagemin from 'imagemin';
+import imageminWebp from 'imagemin-webp';
 
 export function getAll(req, res) {
 
@@ -23,18 +25,45 @@ export async function addOnce(req, res) {
     // Invoquer la méthode create directement sur le modèle
     let userid = req.session.user._id
     let imageF;
+    let i;
     if (req.file) {
       imageF = req.file.filename
-      
+     // i = imageF.replace(imageF.slice(imageF.indexOf('.')), '.webp')
+    //   const { filename: image } = req.file;
+       
+    //     await sharp(req.file.path)
+    //      .resize(200, 200)
+    //      .jpeg({ quality: 90 })
+    //      .toFile(
+    //          path.resolve(req.file.destination,'outfit',image)
+    //      )
+    //      fs.unlinkSync(req.file.path)
+        //  imagemin([req.file.path], {
+        //     destination: './uploads/outfit',
+        //     plugins: [
+        //       imageminWebp({
+        //            quality: 80
+        //         //   ,
+        //         //   resize: {
+        //         //     width: 1000,
+        //         //     height: 0
+        //         //   }
+        //         ,rotate : 90
+        //       }),
+        //     ],
+        //   }).then(() => {
+        //     fs.unlinkSync(req.file.path)
+        //     console.log("Images Converted Successfully!!!");
+        //   });
     }
     let out ={
         typee:req.body.typee,
         taille:req.body.taille,
         couleur:req.body.couleur,
-        description:req.body.description,
+        category:req.body.category,
         userID:userid,
         photo:imageF,
-        eliminated:[]
+     
     }
     outfit
         .create(out)
@@ -97,12 +126,13 @@ export async function getOutfitByUser(req, res) {
 
     //console.log( mongoose.ObjectId(haja))
   await  outfit
-        .find({userID:{$nin :[req.session.user._id]},"_id":{$nin:haja}})
+        .find({userID:{$nin :[req.session.user._id]},_id:{$nin:haja}})
         .then((doc) => {
            // let list = elem.map(s => mongoose.ObjectId(s))
               // console.log(doc)
            
               res.status(200).json(doc)
+              console.log(doc)
             
    
          
@@ -164,13 +194,32 @@ export async function Updatephoto(req,res){
       photo = req.file.filename
       const { filename: image } = req.file;
        
-        await sharp(req.file.path)
-         .resize(200, 200)
-         .jpeg({ quality: 90 })
-         .toFile(
-             path.resolve(req.file.destination,'outfit',image)
-         )
-         fs.unlinkSync(req.file.path)
+        // await sharp(req.file.path)
+        //  .resize(200, 200)
+        //  .jpeg({ quality: 90 })
+        //  .toFile(
+        //      path.resolve(req.file.destination,'outfit',image)
+        //  )
+        //  fs.unlinkSync(req.file.path)
+        // i = photo.replace(photo.slice(photo.indexOf('.')), '.webp')
+       
+        //      imagemin([req.file.path], {
+        //         destination: './uploads/outfit',
+        //         plugins: [
+        //           imageminWebp({
+        //                quality: 80
+        //             //   ,
+        //             //   resize: {
+        //             //     width: 1000,
+        //             //     height: 0
+        //             //   }
+        //             ,rotate : 90
+        //           }),
+        //         ],
+        //       }).then(() => {
+        //         fs.unlinkSync(req.file.path)
+        //         console.log("Images Converted Successfully!!!");
+        //       });
     
       let outfitt = await outfit.findOneAndUpdate(
         { "_id":req.params.id },

@@ -7,19 +7,19 @@ const { Schema, model } = mongoose; // Utiliser Schema et model du module mongoo
 const userSchema = new Schema({
     firstname: {
         type: String,
-        required: true // Cet attribut est obligatoire
+        // Cet attribut est obligatoire
     },
     lastname: {
         type: String,
-        required: true
+        
     },
     birthdate: {
         type: Date,
-        required: true
+        
     },
     pseudo: {
         type: String,
-        required: true
+        
     },
     imageF:{
      type: String,
@@ -37,24 +37,24 @@ const userSchema = new Schema({
     },
     phone: {
         type: Number,
-        required: true
+        
     },
     password: {
         type: String,
-        required: true
+        
 
     },
     isVerified:{
      type :Boolean,
-     required : true
+     
     },
     preference: {
         type: String,
-        required: true
+        
     },
     gender:{
      type : String,
-     required :true
+     
     },
  
     resetPasswordToken: {

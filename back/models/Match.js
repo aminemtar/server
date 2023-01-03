@@ -24,6 +24,18 @@ const MatchSchema = new Schema({
         type: Boolean,
 
         required: false
+    },
+    totrade:{
+        type :String,
+        required :false
+    },
+    totradeR:{
+        type :String,
+        required :false
+    },
+    trader:{
+        type :String,
+        required :false
     }
   
    

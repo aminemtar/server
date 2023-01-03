@@ -23,18 +23,12 @@ const outfitSchema = new Schema({
         type: String,
         required: true
     },
-    description: {
+    category: {
         type: String,
         required: true
     },
-    photo:{
-        type:String,
-        required:true
-    },
-    eliminated:{
-        type:Array,
-        required : false
-    }
+
+ 
    
 
 }, {

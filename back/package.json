@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node docker.js"
+    "start": "node server.js"
   },
   "author": "",
   "license": "ISC",
@@ -25,9 +25,15 @@
     "express-handlebars": "^6.0.6",
     "express-session": "^1.17.3",
     "express-validator": "^6.14.2",
+    "express-ws": "^5.0.2",
+    "express-ws-routes": "^1.1.0",
+    "fluent-ffmpeg": "^2.1.2",
     "fs": "^0.0.1-security",
     "hogan": "^1.0.2",
+    "imagemin": "^8.0.1",
+    "imagemin-webp": "^7.0.0",
     "jade": "^1.11.0",
+    "json-socket": "^0.3.0",
     "jsonwebtoken": "^8.5.1",
     "mongo": "^0.1.0",
     "mongoose": "^6.7.0",
@@ -41,6 +47,8 @@
     "sharp": "^0.31.2",
     "socket.io": "^4.5.4",
     "swagger-jsdoc": "^6.2.5",
-    "swagger-ui-express": "^4.6.0"
+    "swagger-ui-express": "^4.6.0",
+    "webp-converter": "^2.3.3",
+    "ws": "^8.11.0"
   }
 }

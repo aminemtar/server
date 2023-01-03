@@ -10,9 +10,15 @@ import multer from 'multer';
 import express from 'express';
 import sharp from 'sharp';
 import path from 'path';
+import messages from '../models/messages.js';
+import imagemin from 'imagemin';
+import imageminWebp from 'imagemin-webp';
+import webp from 'webp-converter';
 
 
 import dotenv from 'dotenv';
+import { timeStamp } from 'console';
+import { now } from 'mongoose';
 dotenv.config();
 
 
@@ -84,8 +90,9 @@ export async function login(req, res, next) {
       message: "Username or Password not present",
     })
   }
+  let em =email
   try {
-    const userr = await user.findOne({ email })
+    const userr = await user.findOne({ email:em })
     if (!userr || userr.isVerified===false) {
       res.status(400).json({
         message: "Login not successful",
@@ -98,6 +105,7 @@ export async function login(req, res, next) {
         if (result) {
           // res.header("auth-token",token).send(token);
           req.session.user = userr;
+         // console.log(userr)
           req.session.save();
           res.status(200).json({
             message: "Login successful",
@@ -117,6 +125,53 @@ export async function login(req, res, next) {
     })
   }
 }
+export async function loginwithsocial(req,res){
+  const { email, firstname,lastname,pseudo } = req.body
+let u= await user.findOne({email:email})
+if(u)
+{
+  let token = jwt.sign({ _id: u._id }, 'mtar', { expiresIn: '1h' })
+  req.session.user = u;
+  // console.log(userr)
+   req.session.save();
+   res.status(200).json({
+     message: "Login successful",
+     u, token,
+   })
+}
+else{
+  let userHashed = {
+    firstname: req.body.firstname,
+    lastname: req.body.lastname,
+    email: req.body.email,
+    password: "azerty",
+    pseudo: req.body.pseudo,
+    phone: 0,
+    preference: "",
+    gender: "default",
+    birthdate: Date.now(),
+    imageF: 'aa',
+    //imageF: req.params.image,
+    isVerified: true
+    
+
+  }
+  
+  user
+    .create(userHashed)
+    .then(newuser => {
+      req.session.user = newuser;
+  // console.log(userr)
+   req.session.save();
+   console.log(req.session.user)
+      res.status(200).json(newuser);
+    })
+    .catch(err => {
+      res.status(500).json({ error: err });
+    });
+
+}
+}
 export function patchOnce(req, res) {
   user
     .findOneAndUpdate(req.params.id, req.body)
@@ -129,8 +184,11 @@ export function patchOnce(req, res) {
     });
 }
 export function logout(req, res) {
+  console.log("logout")
   req.session.destroy();
-  return res.send("User logged out!");
+  
+  return res.status(200).json("user logged out");
+  
 }
 export async function deletee(req, res) {
   user
@@ -364,7 +422,7 @@ export async function main(email) {
 
   // send mail with defined transport object
   let info = await transporter.sendMail({
-    from: '"clothy👻" <mohamedamine.mtar@esprit.tn>', // sender address
+    from: '"clothy👻" <Clothyy.app@gmail.com>', // sender address
     to: email, // list of receivers
     subject: "Hello ✔", // Subject line
     text: "Hello world?", // plain text body
@@ -571,7 +629,7 @@ export async function confirmAccount(email) {
     },
   });
     let info = await transporter.sendMail({
-      from: '"clothy👻" <mohamedamine.mtar@esprit.tn>', // sender address
+      from: '"clothy👻" <Clothyy.app@gmail.com>', // sender address
       to: email, // list of receivers
       subject: "Hello ✔", // Subject line
       text: "Confirm your account", // plain text body
@@ -757,7 +815,7 @@ export async function confirmAccount(email) {
                           <table border="0" cellpadding="0" cellspacing="0">
                             <tr>
                               <td align="center" bgcolor="#1a82e2" style="border-radius: 6px;">
-                                <a href='https://cicero-crm.com/api/confirm/`+email+`' target="_blank" style="display: inline-block; padding: 16px 36px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; color: #ffffff; text-decoration: none; border-radius: 6px;">Comfirm your email</a>
+                                <a href='http://192.168.1.2:9090/api/confirm/`+email+`' target="_blank" style="display: inline-block; padding: 16px 36px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; color: #ffffff; text-decoration: none; border-radius: 6px;">Comfirm your email</a>
 
                                 </td>
                             </tr>
@@ -866,7 +924,7 @@ export async function confirm (req,res)
 export async function changePassword (req,res){
   var newPasswordEncrypted;
   const {  newPassword,password} = req.body
-  let email = req.params.id
+  let email = req.session.user.email
   const userr = await user.findOne({ email })
   bcrypt.compare(password, userr.password).then(async function (result) {
     if (result) {
@@ -881,9 +939,7 @@ export async function changePassword (req,res){
               password: newPasswordEncrypted,
             },
           }
-        )
-
-      
+        )      
         }
       
       res.status(200).json({
@@ -905,19 +961,57 @@ export async function UpdateImage(req,res){
   
   const userr = await user.findOne({ "email":req.params.email})
   let imageF;
+  let i;
+  
   if (req.file) {
     imageF = req.file.filename
-    
+    //i = imageF.replace(imageF.slice(imageF.indexOf('.')), '.webp')
+
+    const { filename: image } = req.file;
+       
+         // await sharp(req.file.path)
+         // .rotate(90)
+        //  //.resize(200, 200)
+        //  .jpeg({ quality: 80 })
+        //  .toFile(
+        //      path.resolve(req.file.destination,'resized',image)
+        //  )
+         
+        // imagemin([req.file.path], {
+        //   destination: './uploads/resized',
+          
+        //   plugins: [
+        //     imageminWebp({
+        //          quality: 80,
+        //       //   ,
+        //       //   resize: {
+        //       //     width: 1000,
+        //       //     height: 0
+        //       //   }
+        //      rotate : 90
+        //     }),
+        //   ],
+        // }).then(() => {
+        //   fs.unlinkSync(req.file.path)
+        //   console.log("Images Converted Successfully!!!");
+        // });
+        // //const result = webp.cwebp(req.file.path,"nodejs_logo.webp","-q 80");
+        // console.log(req.file.path)
+        // console.log(req.file.filename)
   
     let userr = await user.findOneAndUpdate(
-      { "email":req.params.email },
+      { _id:req.session.user._id },
       {
         $set: {
           imageF :imageF,
           
+          
         },
       }
-    )
+    ).then(req.session.reload(function(err){
+      req.session.user.imageF = req.file.filename
+      
+    }))
 
     return res.send({ message: "Photo updated successfully", userr ,imageF})
   } else {

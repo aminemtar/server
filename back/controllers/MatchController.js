@@ -44,10 +44,8 @@ export async function Swipeleft(req, res) {
         $push: {
             IdOutfitR :req.body.IdOutfitR
             
-        }, 
-        $set:{
-          Etat :true
-        }      
+        }
+            
     })
     .then(docs => {
         res.status(200).json(docs);
@@ -149,3 +147,130 @@ export async function Swipeleft(req, res) {
   // })
 
   // }
+  export async function matchoutfit(req,res){
+    
+let Match = await match.findOne({"_id":req.params.id})
+console.log(Match.IdOutfitR)
+if(req.session.user._id === Match.IdSession)
+{
+  outfit.find({_id:{$in : Match.IdOutfit}})
+  .then(doc =>{
+    res.status(200).json(doc)
+
+  })
+  .catch(err => {
+    res.status(500).json({ error: err });
+  });
+}else{
+  outfit.find({_id:{$in : Match.IdOutfitR}})
+  .then(doc =>{
+    res.status(200).json(doc)
+
+  })
+  .catch(err => {
+    res.status(500).json({ error: err });
+  });
+}
+  }
+
+  export async function matchoutfitR(req,res){
+    
+    let Match = await match.findOne({"_id":req.params.id})
+    console.log(Match.IdOutfitR)
+    if(req.session.user._id === Match.IdSession)
+    {
+      outfit.find({_id:{$in : Match.IdOutfitR}})
+      .then(doc =>{
+        res.status(200).json(doc)
+    
+      })
+      .catch(err => {
+        res.status(500).json({ error: err });
+      });
+    }else{
+      outfit.find({_id:{$in : Match.IdOutfit}})
+      .then(doc =>{
+        res.status(200).json(doc)
+    
+      })
+      .catch(err => {
+        res.status(500).json({ error: err });
+      });
+    }
+      }
+      var totradee 
+      var totradeeR ;
+      export   function trade(req,res){
+
+      
+          match.findOne({"_id":req.params.id}).then(doc => {
+          console.log(doc)
+          console.log(doc.totrade)
+
+          if(typeof doc.totrade === 'undefined'|| doc.totrade === ""){
+            console.log('dkhalt')
+          match.updateOne({"_id":req.params.id  },{
+              $set:{
+                totrade : req.body.totrade, 
+                totradeR : req.body.totradeR ,
+                trader : req.session.user._id
+             }
+            }
+             ).then(doc =>{
+              res.status(200).json(doc)
+          
+            })
+            .catch(err => {
+              res.status(500).json({ error: err });
+            });
+
+          } else {
+            match.findOne({"_id":req.params.id ,totrade : req.body.totradeR ,totradeR : req.body.totrade }).then(async doc =>{
+              console.log(doc)
+              if(doc === null){
+                console.log("mafamech")
+              } else {
+                totradee = doc.totrade
+                totradeeR = doc.totradeR
+
+                console.log(doc)
+                if(doc.trader === req.session.user._id)
+                {
+                  console.log("haja")
+                }else{
+                 await outfit.findOneAndUpdate({_id:req.body.totrade},{$set:{
+                    userID :  doc.trader
+                    
+                  }})
+                  
+                await outfit.findOneAndUpdate({_id:req.body.totradeR},{$set:{
+                    userID : req.session.user._id
+                    
+                  }})
+
+                  await match.findOneAndUpdate({"_id":req.params.id},{$set:{
+                totrade : "", 
+                totradeR : "",
+                trader : ""
+
+                  }})
+                  await match.findOneAndUpdate({"_id":req.params.id},{$pull:{
+                        IdOutfit : totradeeR,
+                        IdOutfitR : totradee,
+                       // IdOutfit : [totrade,totradeR],
+                      }})
+                      await match.findOneAndUpdate({"_id":req.params.id},{$pull:{
+                        IdOutfit : totradee,
+                        IdOutfitR : totradeeR
+                       // IdOutfit : [totrade,totradeR],
+                      }})
+                  console.log("wkayet tabdil")
+                }
+                
+              }
+            })
+          }
+        })
+        
+        
+      }
