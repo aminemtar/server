@@ -37,7 +37,7 @@ mongoose.Promise = global.Promise;
 
 // Se connecter à MongoDB
 mongoose
-    .connect(`mongodb://mongo_db:27017/${databaseName}`)
+    .connect(`mongodb://localhost:27017/${databaseName}`)
     .then(() => {
         // Une fois connecté, afficher un message de réussite sur la console
         console.log(`Connected to ${databaseName}`);

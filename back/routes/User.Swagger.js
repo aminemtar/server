@@ -307,7 +307,7 @@ const DeleteUser ={
     }
 }
 const UserRoute = {
-    "/api/a": {
+    "/api/allUser": {
         get: ListUser
     },
     "/api/register": {

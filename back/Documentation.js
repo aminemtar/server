@@ -12,7 +12,7 @@ info:{
 },
 servers: [
 {
-    url:"http://localhost:9090",
+    url:"http://localhost:3000",
     decription :"Local dev"
 }
 
