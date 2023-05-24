@@ -20,7 +20,7 @@ router.post('/loginWS',loginwithsocial)
 router.post('/recover', recover)
 router.post("/changepwcode", testcode)
 router.post("/forgetpwd", forgotPassword);
-router.put("/updateU/:id", patchOnce)
+router.put("/updateU", patchOnce)
     .put("/changepass", res)
     .put("/updatePr/:id", updateProfile);
 
@@ -29,7 +29,7 @@ router.delete("/deleteUser/:id", deletee);
 router.get("/logout", logout);
 router.get("/SessionUser", us);
 router.get("/allUser", getAll);
-router.get("/once/:id", getOnce);
+router.get("/once", getOnce);
 router.get("/confirm/:email", confirm);
 router.put("/updatepass", changePassword)
     .post("/updateImage", upload.single('imageF'), UpdateImage)

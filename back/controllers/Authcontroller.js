@@ -59,7 +59,7 @@ export async function addOnce(req, res) {
    
       user
         .create(userHashed)
-        .then(newuser => {
+        .then(async userr => {
           
           // sgMail.send(mailOptions, (error, result) => {
           //   if (error) return res.status(500).json({ message: error.message });
@@ -68,9 +68,9 @@ export async function addOnce(req, res) {
           // newuser.token = token;
           // const token = generateUserToken(newuser)
           // doSendConfirmationEmail(email,token,req.protocol);
-        // main(newuser.email);
-        confirmAccount(newuser.email)
-          res.status(200).json(newuser);
+         //main(newuser.email);
+         await confirmAccount(userr.email)
+          res.status(200).json({userr});
         })
         .catch(err => {
           res.status(500).json({ error: err });
@@ -105,6 +105,9 @@ export async function login(req, res, next) {
         if (result) {
           // res.header("auth-token",token).send(token);
           req.session.user = userr;
+          req.session.UserID= userr._id
+          console.log(req.session.user._id)
+          console.log(req.session.user)
          // console.log(userr)
           req.session.save();
           res.status(200).json({
@@ -172,16 +175,16 @@ else{
 
 }
 }
-export function patchOnce(req, res) {
-  user
-    .findOneAndUpdate(req.params.id, req.body)
-    .then(doc => {
+export async function patchOnce(req, res) {
+  let userr
+ userr= await user
+    .findOneAndUpdate({_id:req.session.user._id}, req.body, { new: true })
+    try{res.status(200).json({userr});}
       
-      res.status(200).json(doc);
-    })
-    .catch(err => {
-      res.status(500).json({ error: err });
-    });
+    
+    catch{res.status(500).json({ error: err });}
+      
+    
 }
 export function logout(req, res) {
   console.log("logout")
@@ -204,8 +207,8 @@ export function getAll(req, res) {
 
   user
     .find({})
-    .then(docs => {
-      res.status(200).json(docs);
+    .then(userr => {
+      res.status(200).json(userr);
     })
     .catch(err => {
       res.status(500).json({ error: err });
@@ -213,9 +216,9 @@ export function getAll(req, res) {
 }
 export function getOnce(req, res) {
   user
-    .findOne({ "_id": req.params.id })
-    .then(doc => {
-      res.status(200).json([doc]);
+    .findOne({ "_id": req.session.user._id})
+    .then(userr => {
+      res.status(200).json(userr);
     })
     .catch(err => {
       res.status(500).json({ error: err });
@@ -377,28 +380,7 @@ export function recover(req, res) {
 
 
 
-export async function res(req, res) {
-  var newPasswordEncrypted;
-  const { email, newPassword } = req.body
 
-  if (newPassword) {
-    newPasswordEncrypted = await bcrypt.hash(newPassword, 10)
-
-    let userr = await user.findOneAndUpdate(
-      { email: email },
-      {
-        $set: {
-          password: newPasswordEncrypted,
-        },
-      }
-    )
-
-    return res.send({ message: "Password updated successfully", userr })
-  } else {
-    return res.status(403).send({ message: "Password should not be empty" })
-  }
-
-}
 
 const app = express();
 const port = process.env.PORT;
@@ -554,27 +536,52 @@ export async function forgotPassword(req, res) {
 
     res.status(200).send({
       message: "L'email de reinitialisation a été envoyé a " + userr.email,
+      userr
     })
   } else {
     res.status(404).send({ message: "User innexistant" })
   }
 }
-export function testcode(req, res) {
-  console.log(emm)
+export async function testcode(req, res) {
+  
   if (req.body.code === codeDeReinit && req.body.email === emm) {
+    const userr = await user.findOne({ email: req.body.email })
+    console.log(emm)
     res.status(200).send({
-      message: "saha ya bouha"
+      message: "saha ya bouha",userr
     })
   } else {
     res.status(404).send({ message: "oopsi" })
   }
+}
+export async function res(req, res) {
+  var newPasswordEncrypted;
+  const {  newPassword } = req.body
+  let email = emm
+  if (newPassword) {
+    newPasswordEncrypted = await bcrypt.hash(newPassword, 10)
+
+    let userr = await user.findOneAndUpdate(
+      { email: email },
+      {
+        $set: {
+          password: newPasswordEncrypted,
+        },
+      }
+    )
+console.log(emm)
+    return res.status(200).send({ message: "Password updated successfully", userr })
+  } else {
+    return res.status(403).send({ message: "Password should not be empty" })
+  }
+
 }
 export async function updateProfile (req, res)  {
   const { email, firstname, lastname, birthdate, gender, isVerified ,phone,pseudo} = req.body
 let use
 
   let userr = await user.findOneAndUpdate(
-    {"_id":req.params.id}, req.body,
+    {_id:req.session.user._id}, req.body,
     {
       $set: {
         email,
@@ -928,7 +935,7 @@ export async function changePassword (req,res){
   const userr = await user.findOne({ email })
   bcrypt.compare(password, userr.password).then(async function (result) {
     if (result) {
-      
+      console.log("dkhalt")
       if (newPassword)
       {
         newPasswordEncrypted = await bcrypt.hash(newPassword, 10)
@@ -943,7 +950,7 @@ export async function changePassword (req,res){
         }
       
       res.status(200).json({
-        message: "Login successful",
+        message: "Password changed succefully",
          userr,newPassword
         
       })
@@ -951,15 +958,12 @@ export async function changePassword (req,res){
     }
 
 
-    else res.status(400).json({ message: "Login not succesful" })
+    else res.status(400).json({ message: "Password not correct!!" })
   })
 
 
 }
 export async function UpdateImage(req,res){
-
-  
-  const userr = await user.findOne({ "email":req.params.email})
   let imageF;
   let i;
   
@@ -1003,9 +1007,7 @@ export async function UpdateImage(req,res){
       { _id:req.session.user._id },
       {
         $set: {
-          imageF :imageF,
-          
-          
+          imageF :imageF,        
         },
       }
     ).then(req.session.reload(function(err){

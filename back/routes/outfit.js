@@ -14,7 +14,12 @@ import {
     Updatephoto,
     getOutfitByType,
     getOutfitByUser,
-    getswiped
+    getswiped,
+    getswipedd,
+    getmswiped,
+    unlock,
+    lock,
+    getlockedoutfit
 } from '../controllers/outfit.js';
 
 const router = express.Router();
@@ -26,6 +31,11 @@ router
     .get("/OFT/:typee",getOutfitByType)
     .get("/allOFT",getOutfitByUser)
     .get("/getswiped",getswiped)
+    .get("/getswipedd",getswipedd)
+    .get("/getmatcherswiped/:id",getmswiped)
+    .get("/getlocked",getlockedoutfit)
+    .put("/lock/:id",lock)
+    .put("/unlock/:id",unlock)
 
 router
     

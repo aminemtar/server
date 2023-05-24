@@ -1,4 +1,5 @@
 import mongoose from 'mongoose'; // Importer Mongoose
+import user from './user.js';
 const { Schema, model } = mongoose; // Utiliser Schema et model du module mongoose
 
 // Créez votre schéma qui décrit à quoi ressemblera chaque document
@@ -36,6 +37,11 @@ const MatchSchema = new Schema({
     trader:{
         type :String,
         required :false
+    },
+    userr:{
+        type: Schema.Types.ObjectId,
+        ref: 'user',
+        required:false
     }
   
    

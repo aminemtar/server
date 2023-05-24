@@ -7,6 +7,7 @@ import cookieParser from 'cookie-parser';
 import outfitRoutes from './routes/outfit.js';
 import userroute from './routes/Auth.js';
 import matchroute from './routes/MatchRoute.js'
+import messageroute from './routes/messagesRoute.js'
 import cookieSession from 'cookie-session';
 import swaggerDoc from 'swagger-ui-express';
 import swggerDocumentation from './Documentation.js';
@@ -16,6 +17,7 @@ import enableWs from 'express-ws'
 import match from './models/Match.js'
 import user from './models/user.js'
 import { v4 as uuidv4 } from 'uuid';
+import cors from 'cors';
 
 
 
@@ -23,7 +25,7 @@ const app = express();
 enableWs(app)
 
 
-const port = process.env.PORT || 9090;
+const port = process.env.PORT || 9091;
 const databaseName = process.env.DATABASE;
 var aWss = enableWs(app).getWss("/room/")
 var createroom = enableWs(app).getWss("/")
@@ -49,23 +51,30 @@ mongoose
 
 app.set('views', './views');
 
+
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cookieParser());
 app.use("/uploads", express.static('uploads'));
 //app.use("/upload", express.static('uploads/outfit'));
 app.use(session({
-    secret: process.env.SECRET, cookie: {
-        maxAge: 1000 * 60 * 60 * 24 * 365
-    }, saveUninitialized: true, resave: true
+    secret: process.env.SECRET,
+     cookie: {
+        maxAge: 1000 * 60 * 60 * 24 * 365,
+        httpOnly :false
+    },
+     saveUninitialized: true, 
+     resave: true,
+     
 }));
 app.use("/documentations", swaggerDoc.serve);
 app.use("/documentations", swaggerDoc.setup(swggerDocumentation));
 app.use('/outfit', outfitRoutes);
+app.use('/msg',messageroute);
 app.use('/api', userroute);
 app.use('/match', matchroute);
 app.use('/term', function (req, res) {
-    res.sendFile('/Users/medamine/Workspace/server/back/views/termsanservices.html');
+    res.sendFile('views/termsanservices.html', { root: '.' });
 });
 
 app.ws('/room/:id', (ws, req) => {
@@ -86,19 +95,18 @@ app.ws('/room/:id', (ws, req) => {
     ws.id = (req.session.user._id).concat(req.params.id)
     console.log(`New client connected with id: ${ws.id}`);
 
+    // messages.find({ "matchID": req.params.id })
+    //     .then(doc => {
+    //         doc.forEach(element => {
+    //             let msgtosend = Object.assign({ "msg": element })
+    //             ws.send(JSON.stringify(msgtosend))
+    //             console.log(msgtosend)
+    //         });
+    //         // var messagejson = Object.assign({ "msg": doc })
 
-
-    messages.find({ "matchID": req.params.id })
-        .then(doc => {
-            doc.forEach(element => {
-                let msgtosend = Object.assign({ "msg": element })
-                ws.send(JSON.stringify(msgtosend))
-            });
-            // var messagejson = Object.assign({ "msg": doc })
-
-            //  ws.send(msgtosend)
-            console.log(doc)
-        })
+    //         //  ws.send(msgtosend)
+    //         console.log(doc)
+    //     })
 
 
     console.log(req.params.id)
@@ -120,9 +128,10 @@ app.ws('/room/:id', (ws, req) => {
             from: req.session.user._id,
             to: mess.to,
             matchID: mess.idMatch,
-            message: mess.message
+            message: mess.message,
+            isSender: false,
         }
-        console.log(M)
+        console.log(newM)
         // console.log(JSON.stringify(createroom.clients) + "clients")
 
         let toclient = findClientById((mess.to).concat(req.params.id))
@@ -132,7 +141,7 @@ app.ws('/room/:id', (ws, req) => {
             console.log(req.params.id + "params")
             console.log(mess.idMatch + "idmatch")
             let newmes = Object.assign({ "msg": newM })
-            toclient.send(JSON.stringify(newmes))
+            toclient.send(JSON.stringify(newM))
 
         }
 
